@@ -15,18 +15,18 @@ Then, example usages would be:
 - quickstart:
 	```python
 	>>> import fcassim.FastCassim as fcassim
-	>>> fastcassim = fcassim.FastCassim(fcassim.FastCassim.NEW_FTK)
+	>>> fastcassim = fcassim.FastCassim(fcassim.FastCassim.LTK)
 	>>> fastcassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
 	```
 	(which defaults to use the parameters specified in the custome example below)
 - custom configuration:
 	```python
-	>>> metric = fcassim.FastCassim.NEW_FTK
+	>>> metric = fcassim.FastCassim.LTK
 	>>> param = {
 	...     "sigma": 1,
 	...     "lmbda": 0.4,
-	...     "use_new_delta": True
+	...     "average": False
 	... }
 	>>> fastcassim = fcassim.FastCassim(metric)
 	>>> fastcassim.set_params(**param)

@@ -8,9 +8,8 @@ import pathlib
 from .cassim.Cassim import Cassim
 
 class FastCassim(Cassim):
-	NEW_FTK = 0
-	OLD_FTK = 1
-	CASSIM = 2
+	LTK = 0
+	FTK = 1
 
 	def __init__(self, metric:int, swbd=False, **compute_params):
 		super().__init__(swbd=swbd)
@@ -22,7 +21,7 @@ class FastCassim(Cassim):
 
 	@property
 	def metric(self):
-		return self.__metric #TODO: maybe also return default params
+		return self.__metric
 
 	@property
 	def params(self):
@@ -36,43 +35,33 @@ class FastCassim(Cassim):
 		self.__metric, self.__params = self.__configure(self.__metric, value)
 		return
 
-	def ____configure(self, metric, params):
-		if metric == FastCassim.NEW_FTK:
-			params["average"] = False
-			params["use_new_delta"] = True
-		elif metric == FastCassim.OLD_FTK:
-			params["average"] = False
-			params["use_new_delta"] = False
-		else:
-			pass
-		return params
-
 	def __configure(self, metric, params):
-		params_keys = ["average", "sigma", "lmbda", "use_new_delta"]
-		if metric < 0 or metric > 2:
+		default_params = {
+			"average": False,
+			"sigma": 1,
+			"lmbda": 0.4
+		}
+		if metric < FastCassim.LTK or metric > FastCassim.FTK:
 			raise Exception(f"""
 			Please specify metric to be:
-				FTKCassim.NEW_FTK or {FastCassim.NEW_FTK};
-				FTKCassim.OLD_FTK or {FastCassim.OLD_FTK};
-				FTKCassim.CASSIM  or {FastCassim.CASSIM}
+				FastCassim.LTK or {FastCassim.LTK};
+				FastCassim.FTK or {FastCassim.FTK};
 			""")
+		# filter accepted params
 		conf_params = {}
-		for k,v in params.items():
-			if k not in params_keys:
-				logging.warning(f"param {k}={v} will not be used")
-			else:
+		for k,v in default_params.items():
+			if params.get(k) is None:
+				logging.info(f"param {k}={v} will be used")
 				conf_params[k] = v
-		
-		conf_params = self.____configure(metric, conf_params)
-		logging.info(f"FTKCassim Configued mode={metric}, param={conf_params}")
+			else:
+				conf_params[k] = params[k]
+		conf_params["use_new_delta"] = (metric == FastCassim.LTK)
+
+		logging.info(f"FastCassim Configued mode={metric}, param={conf_params}")
 		return metric, conf_params
 
 	def compute_similarity(self, doc1, doc2):
-		if self.__metric == FastCassim.NEW_FTK or self.__metric == FastCassim.OLD_FTK:
-			return self.ftk_syntax_similarity_two_documents(doc1, doc2, **self.__params)
-		else:
-			average = self.__params.get("average")
-			return self.syntax_similarity_two_documents(doc1, doc2, average=None or average)
+		return self.syntax_similarity_two_documents(doc1, doc2, **self.__params)
 
 def download():
 	# configure folders

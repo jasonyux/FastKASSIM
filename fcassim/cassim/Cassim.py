@@ -37,78 +37,7 @@ class Cassim:
                 self.convert_mytree(node,tempnode)
         return pnode
 
-    def syntax_similarity_two_documents(self, doc1, doc2, average=False): #syntax similarity of two single documents
-        global numnodes
-        doc1sents = self.sent_detector.tokenize(doc1.strip())
-        doc2sents = self.sent_detector.tokenize(doc2.strip())
-        for s in doc1sents: # to handle unusual long sentences.
-            if len(s.split())>100:
-                # return "NA"
-                break
-        for s in doc2sents:
-            if len(s.split())>100:
-                # return "NA"
-                break
-        
-        try: #to handle parse errors. Parser errors might happen in cases where there is an unsuall long word in the sentence.
-            doc1parsed = self.parser.raw_parse_sents((doc1sents))
-            doc2parsed = self.parser.raw_parse_sents((doc2sents))
-        except Exception as e:
-            sys.stderr.write(str(e))
-            return "NA"
-        costMatrix = []
-        doc1parsed = list(doc1parsed)
-        for i in range(len(doc1parsed)):
-            doc1parsed[i] = list(doc1parsed[i])[0]
-        doc2parsed = list(doc2parsed)
-        for i in range(len(doc2parsed)):
-            doc2parsed[i] = list(doc2parsed[i])[0]
-        for i in range(len(doc1parsed)):
-            numnodes = 0
-            sentencedoc1 = ParentedTree.convert(doc1parsed[i])
-            tempnode = Node(sentencedoc1.root().label())
-            new_sentencedoc1 = self.convert_mytree(sentencedoc1,tempnode)
-            temp_costMatrix = []
-            sen1nodes = numnodes
-            for j in range(len(doc2parsed)):
-                numnodes=0.0
-                sentencedoc2 = ParentedTree.convert(doc2parsed[j])
-                tempnode = Node(sentencedoc2.root().label())
-                new_sentencedoc2 = self.convert_mytree(sentencedoc2,tempnode)
-                ED = simple_distance(new_sentencedoc1, new_sentencedoc2)
-                ED = ED / (numnodes + sen1nodes)
-                temp_costMatrix.append(ED)
-            costMatrix.append(temp_costMatrix)
-        costMatrix = np.array(costMatrix)
-        if average==True:
-            return 1-np.mean(costMatrix)
-        else:
-            """
-            indexes = su.linear_sum_assignment(costMatrix)
-            total = 0
-            rowMarked = [0] * len(doc1parsed)
-            colMarked = [0] * len(doc2parsed)
-            for row, column in indexes:
-                # this iteration does not make sense in the latest linear_sum_assignment()
-                total += costMatrix[row][column]
-                rowMarked[row] = 1
-                colMarked [column] = 1
-            for k in range(len(rowMarked)):
-                if rowMarked[k]==0:
-                    total+= np.min(costMatrix[k])
-            for c in range(len(colMarked)):
-                if colMarked[c]==0:
-                    total+= np.min(costMatrix[:,c])
-            row_ind, col_ind = su.linear_sum_assignment(costMatrix)
-            """
-            row_ind, col_ind = su.linear_sum_assignment(costMatrix)
-            total = costMatrix[row_ind, col_ind].sum()
-            maxlengraph = max(len(doc1parsed),len(doc2parsed))
-            return 1-(total/maxlengraph)
-
-    def ftk_syntax_similarity_two_documents(self, doc1, doc2, average=False, sigma=1, lmbda=0.4, use_new_delta=True): #syntax similarity of two single documents
-        global numnodes
-        logging.debug(f'param received average={average}, sigma={sigma}, lmbda={lmbda}, use_new_delta={use_new_delta}')
+    def syntax_similarity_two_documents(self, doc1, doc2, average=False, sigma=1, lmbda=0.4, use_new_delta=True): #syntax similarity of two single documents
         doc1sents = self.sent_detector.tokenize(doc1.strip())
         doc2sents = self.sent_detector.tokenize(doc2.strip())
         for s1, s2 in zip(doc1sents, doc2sents): # to handle unusual long sentences.
@@ -135,7 +64,6 @@ class Cassim:
             for j in range(len(doc2parsed)):
                 sentencedoc2 = Tree.convert(doc2parsed[j])
                 normalized_score = LabelTreeKernel.kernel(sentencedoc1, sentencedoc2, sigma, lmbda, use_new_delta)
-                #print(f"[DEBUG] 1-normalized_score {normalized_score}")
                 temp_costMatrix.append(normalized_score)
             costMatrix.append(temp_costMatrix)
         costMatrix = np.array(costMatrix)
