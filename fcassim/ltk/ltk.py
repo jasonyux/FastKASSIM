@@ -63,11 +63,8 @@ class LabelTreeKernel():
 		for child_x in tree_x_children:
 			# to compute the number of SST/ST rooted at child_x, check with all of tree_y_children
 			tmp = 0
-			#print(f'start tmp={tmp} at {child_x}')
 			for child_y in tree_y_children:
-				#print(f'at tmp={tmp} at {child_y}')
 				tmp += LabelTreeKernel.delta_function(child_x, child_y, sigma, lmbda, delta_vector)
-			#print(f'ret tmp={tmp} at {child_x}')
 			prod *= (sigma + tmp)
 		
 		delta_vector.add(tree_x.get_id(), tree_y.get_id(), lmbda * prod)
@@ -89,14 +86,10 @@ class LabelTreeKernel():
 		for i in range(len(tree_x_children)):
 			x_child = tree_x_children[i]
 			y_child = tree_y_children[i]
-			#print(f"At: x={x_child}, y={y_child}; prod={prod}")
-			#if (x_child.has_children() and y_child.has_children() and x_child.productions() == y_child.productions()):
 			if (x_child.productions() == y_child.productions()):
 				prod *= (sigma + LabelTreeKernel.delta_function(x_child, y_child, sigma, lmbda, delta_vector))
 			else:
-				#if (x_child.has_children() != y_child.has_children()):
 				prod *= sigma
-			#print(f"Ret: x={x_child}, y={y_child}; prod={prod}")
 		
 		delta_vector.add(tree_x.get_id(), tree_y.get_id(), lmbda * prod)
 		return lmbda * prod
