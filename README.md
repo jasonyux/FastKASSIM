@@ -1,3 +1,7 @@
+# FastCASSIM
+
+FastCASSIM - a fast metric for document-level syntactic similarity based on Tree kernel [[1]](#1)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[2]](#2)
+
 # Usage
 
 For the **first time**, please run the `download()` method that downloads the stanford parser and extracts it to be visible to CASSIM
@@ -33,3 +37,10 @@ Then, example usages would be:
 	>>> fastcassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
 	```
+
+# References
+<a id="1">[1]</a> 
+Moschitti, Alessandro. (2006). Making Tree Kernels Practical for Natural Language Learning.. Proceedings of the 11th Conference of the European Chapter of the Association for Computational Linguistics. https://aclanthology.org/E06-1015.pdf
+
+<a id="2">[2]</a> 
+Boghrati, R., Hoover, J., Johnson, K.M. et al. Conversation level syntax similarity metric. Behav Res 50, 1055–1073 (2018). https://doi.org/10.3758/s13428-017-0926-2
