@@ -1,0 +1,6 @@
+# garbage
+*.egg-info
+__pycache__
+
+# libs/binaries
+jars
