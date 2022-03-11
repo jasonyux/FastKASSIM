@@ -38,7 +38,7 @@ Then, example usages would be:
 	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
 	```
-- **separte parsing and simlarity computation**:
+- **customizable document parsing**:
 	```python
 	>>> import fcassim.FastKassim as fcassim
 	>>> FastKassim = fcassim.FastKassim(fcassim.FastKassim.LTK)
@@ -58,7 +58,11 @@ Then, example usages would be:
 	>>> FastKassim.compute_similarity_preparsed(doc1_parsed, doc2_parsed)
 	0.7717689799810963
 	```
-	the above will be the same as doing:
+	here `parse_document(doc, tokenizer=None, parser=None)` offers the advantage of:
+	- being able to customize what parser and sentence tokenizer you want to use
+	- since parsing long documents may take a long time, this allows you to multithread/save parses for future use
+	
+	Resultwise, the above will be the same as doing:
 	```python
 	>>> import fcassim.FastKassim as fcassim
 	>>> FastKassim = fcassim.FastKassim(fcassim.FastKassim.LTK)
@@ -71,9 +75,6 @@ Then, example usages would be:
 	>>> FastKassim.compute_similarity(doc1, doc2)
 	0.7717689799810963
 	```
-	but `parse_document(doc, tokenizer=None, parser=None)` offers the advantage of:
-	- being able to customize what parser and sentence tokenizer you want to use
-	- since parsing long documents may take a long time, this allows you to multithread/save parses for future use
 
 # References
 <a id="1">[1]</a> 
