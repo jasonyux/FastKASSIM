@@ -1,6 +1,6 @@
 # FastKassim
 
-FastKassim - a fast metric for document-level syntactic similarity based on Tree kernel [[1]](#1)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[2]](#2)
+FastKassim - a fast metric for document-level syntactic similarity inspired by the Fast Tree Kernel [[1]](#1)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[2]](#2)
 
 # Usage
 
@@ -24,21 +24,8 @@ Then, example usages would be:
 	1.0
 	```
 	(which defaults to use the parameters specified in the custome example below)
-- **custom configuration**:
-	```python
-	>>> import fcassim.FastKassim as fcassim
-	>>> metric = fcassim.FastKassim.LTK
-	>>> param = {
-	...     "sigma": 1,
-	...     "lmbda": 0.4,
-	...     "average": False
-	... }
-	>>> FastKassim = fcassim.FastKassim(metric)
-	>>> FastKassim.set_params(**param)
-	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
-	1.0
-	```
-- **customizable document parsing**:
+	
+- **Need to recompute lots of parse trees (e.g., pairwise comparisons)? Try using customizable document parsing**:
 	```python
 	>>> import fcassim.FastKassim as fcassim
 	>>> FastKassim = fcassim.FastKassim(fcassim.FastKassim.LTK)
@@ -75,8 +62,25 @@ Then, example usages would be:
 	>>> FastKassim.compute_similarity(doc1, doc2)
 	0.7717689799810963
 	```
+	
+- **custom configuration**:
+	```python
+	>>> import fcassim.FastKassim as fcassim
+	>>> metric = fcassim.FastKassim.LTK
+	>>> param = {
+	...     "sigma": 1,
+	...     "lmbda": 0.4,
+	...     "average": False
+	... }
+	>>> FastKassim = fcassim.FastKassim(metric)
+	>>> FastKassim.set_params(**param)
+	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
+	1.0
+	```
 
 # References
+If FastKASSIM is useful in any work resulting in publication, please cite the FastKASSIM, CASSIM and FTK papers. FastKASSIM would not exist without CASSIM and FTK.
+
 <a id="1">[1]</a> 
 Moschitti, Alessandro. (2006). Making Tree Kernels Practical for Natural Language Learning.. Proceedings of the 11th Conference of the European Chapter of the Association for Computational Linguistics. https://aclanthology.org/E06-1015.pdf
 
