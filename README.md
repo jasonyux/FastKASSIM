@@ -1,12 +1,12 @@
-# FastCASSIM
+# FastKassim
 
-FastCASSIM - a fast metric for document-level syntactic similarity based on Tree kernel [[1]](#1)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[2]](#2)
+FastKassim - a fast metric for document-level syntactic similarity based on Tree kernel [[1]](#1)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[2]](#2)
 
 # Usage
 
 For the **first time**, please run the `download()` method that downloads the stanford parser and extracts it to be visible to CASSIM
 ```python
->>> import fcassim.FastCassim as fcassim
+>>> import fcassim.FastKassim as fcassim
 >>> fcassim.download()
 Downloading https://nlp.stanford.edu/software/stanford-parser-full-2015-04-20.zip
 Extracting
@@ -18,23 +18,24 @@ note that since `https://nlp.stanford.edu/software/stanford-parser-full-2015-04-
 Then, example usages would be:
 - quickstart:
 	```python
-	>>> import fcassim.FastCassim as fcassim
-	>>> fastcassim = fcassim.FastCassim(fcassim.FastCassim.LTK)
-	>>> fastcassim.compute_similarity("Winter is leaving.", "Spring is coming.")
+	>>> import fcassim.FastKassim as fcassim
+	>>> FastKassim = fcassim.FastKassim(fcassim.FastKassim.LTK)
+	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
 	```
 	(which defaults to use the parameters specified in the custome example below)
 - custom configuration:
 	```python
-	>>> metric = fcassim.FastCassim.LTK
+	>>> import fcassim.FastKassim as fcassim
+	>>> metric = fcassim.FastKassim.LTK
 	>>> param = {
 	...     "sigma": 1,
 	...     "lmbda": 0.4,
 	...     "average": False
 	... }
-	>>> fastcassim = fcassim.FastCassim(metric)
-	>>> fastcassim.set_params(**param)
-	>>> fastcassim.compute_similarity("Winter is leaving.", "Spring is coming.")
+	>>> FastKassim = fcassim.FastKassim(metric)
+	>>> FastKassim.set_params(**param)
+	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
 	```
 

@@ -6,7 +6,7 @@ setuptools.setup(
     author="Columbia NLP Lab",
     author_email="xy2437@columbia.edu",
     description="Cassim with LTK Support",
-    url="https://github.com/jasonyux/FastCASSIM.git",
+    url="https://github.com/jasonyux/FastKassim.git",
     package_dir={"": "fcassim"},
     packages=setuptools.find_packages("fcassim"),
     python_requires=">=3.6",

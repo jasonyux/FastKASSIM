@@ -7,7 +7,7 @@ import pathlib
 
 from .cassim.Cassim import Cassim
 
-class FastCassim(Cassim):
+class FastKassim(Cassim):
 	LTK = 0
 	FTK = 1
 
@@ -41,11 +41,11 @@ class FastCassim(Cassim):
 			"sigma": 1,
 			"lmbda": 0.4
 		}
-		if metric < FastCassim.LTK or metric > FastCassim.FTK:
+		if metric < FastKassim.LTK or metric > FastKassim.FTK:
 			raise Exception(f"""
 			Please specify metric to be:
-				FastCassim.LTK or {FastCassim.LTK};
-				FastCassim.FTK or {FastCassim.FTK};
+				FastKassim.LTK or {FastKassim.LTK};
+				FastKassim.FTK or {FastKassim.FTK};
 			""")
 		# filter accepted params
 		conf_params = {}
@@ -55,9 +55,9 @@ class FastCassim(Cassim):
 				conf_params[k] = v
 			else:
 				conf_params[k] = params[k]
-		conf_params["use_new_delta"] = (metric == FastCassim.LTK)
+		conf_params["use_new_delta"] = (metric == FastKassim.LTK)
 
-		logging.info(f"FastCassim Configued mode={metric}, param={conf_params}")
+		logging.info(f"FastKassim Configued mode={metric}, param={conf_params}")
 		return metric, conf_params
 
 	def compute_similarity(self, doc1, doc2):
