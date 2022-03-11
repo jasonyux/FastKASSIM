@@ -1,4 +1,5 @@
 __author__ = 'reihane'
+from typing import Tuple
 import scipy.optimize as su
 import numpy as np
 import sys
@@ -74,199 +75,20 @@ class Cassim:
             total = costMatrix[row_ind, col_ind].sum()
             maxlengraph = max(len(doc1parsed),len(doc2parsed))
             return (total/maxlengraph)
-    
-    def syntax_similarity_two_lists(self, documents1, documents2, average = False): # synax similarity of two lists of documents
-        global numnodes
-        documents1parsed = []
-        documents2parsed = []
 
-        for d1 in range(len(documents1)):
-            # print d1
-            tempsents = (self.sent_detector.tokenize(documents1[d1].strip()))
-            for s in tempsents:
-                if len(s.split())>100:
-                    documents1parsed.append("NA")
-                    break
-            else:
-                temp = list(self.parser.raw_parse_sents((tempsents)))
-                for i in range(len(temp)):
-                    temp[i] = list(temp[i])[0]
-                    temp[i] = ParentedTree.convert(temp[i])
-                documents1parsed.append(list(temp))
-        for d2 in range(len(documents2)):
-            # print d2
-            tempsents = (self.sent_detector.tokenize(documents2[d2].strip()))
-            for s in tempsents:
-                if len(s.split())>100:
-                    documents2parsed.append("NA")
-                    break
-            else:
-                temp = list(self.parser.raw_parse_sents((tempsents)))
-                for i in range(len(temp)):
-                    temp[i] = list(temp[i])[0]
-                    temp[i] = ParentedTree.convert(temp[i])
-                documents2parsed.append(list(temp))
-        results ={}
-        for d1 in range(len(documents1parsed)):
-            # print d1
-            for d2 in range(len(documents2parsed)):
-                # print d1,d2
-                if documents1parsed[d1]=="NA" or documents2parsed[d2] =="NA":
-                    # print "skipped"
-                    continue
-                costMatrix = []
-                for i in range(len(documents1parsed[d1])):
-                    numnodes = 0
-                    tempnode = Node(documents1parsed[d1][i].root().label())
-                    new_sentencedoc1 = self.convert_mytree(documents1parsed[d1][i],tempnode)
-                    temp_costMatrix = []
-                    sen1nodes = numnodes
-                    for j in range(len(documents2parsed[d2])):
-                        numnodes=0.0
-                        tempnode = Node(documents2parsed[d2][j].root().label())
-                        new_sentencedoc2 = self.convert_mytree(documents2parsed[d2][j],tempnode)
-                        ED = simple_distance(new_sentencedoc1, new_sentencedoc2)
-                        ED = ED / (numnodes + sen1nodes)
-                        temp_costMatrix.append(ED)
-                    costMatrix.append(temp_costMatrix)
-                costMatrix = np.array(costMatrix)
-                if average==True:
-                    return 1-np.mean(costMatrix)
-                else:
-                    indexes = su.linear_sum_assignment(costMatrix)
-                    total = 0
-                    rowMarked = [0] * len(documents1parsed[d1])
-                    colMarked = [0] * len(documents2parsed[d2])
-                    for row, column in indexes:
-                        total += costMatrix[row][column]
-                        rowMarked[row] = 1
-                        colMarked [column] = 1
-                    for k in range(len(rowMarked)):
-                        if rowMarked[k]==0:
-                            total+= np.min(costMatrix[k])
-                    for c in range(len(colMarked)):
-                        if colMarked[c]==0:
-                            total+= np.min(costMatrix[:,c])
-                    maxlengraph = max(len(documents1parsed[d1]),len(documents2parsed[d2]))
-                    results[(d1,d2)] = 1-total/maxlengraph
-        return results
-
-    def syntax_similarity_conversation(self, documents1, average=False): #syntax similarity of each document with its before and after document
-        global numnodes
-        documents1parsed = []
-        for d1 in range(len(documents1)):
-            sys.stderr.write(str(d1)+"\n")
-            # print documents1[d1]
-            tempsents = (self.sent_detector.tokenize(documents1[d1].strip()))
-            for s in tempsents:
-                if len(s.split())>100:
-                    documents1parsed.append("NA")
-                    break
-            else:
-                temp = list(self.parser.raw_parse_sents((tempsents)))
-                for i in range(len(temp)):
-                    temp[i] = list(temp[i])[0]
-                    temp[i] = ParentedTree.convert(temp[i])
-                documents1parsed.append(list(temp))
-        results = OrderedDict()
-        for d1 in range(len(documents1parsed)):
-            d2 = d1+1
-            if d2 == len(documents1parsed):
-                break
-            if documents1parsed[d1] == "NA" or documents1parsed[d2]=="NA":
-                continue
-            costMatrix = []
-            for i in range(len(documents1parsed[d1])):
-                numnodes = 0
-                tempnode = Node(documents1parsed[d1][i].root().label())
-                new_sentencedoc1 = self.convert_mytree(documents1parsed[d1][i],tempnode)
-                temp_costMatrix = []
-                sen1nodes = numnodes
-                for j in range(len(documents1parsed[d2])):
-                    numnodes=0.0
-                    tempnode = Node(documents1parsed[d2][j].root().label())
-                    new_sentencedoc2 = self.convert_mytree(documents1parsed[d2][j],tempnode)
-                    ED = simple_distance(new_sentencedoc1, new_sentencedoc2)
-                    ED = ED / (numnodes + sen1nodes)
-                    temp_costMatrix.append(ED)
-                costMatrix.append(temp_costMatrix)
-            costMatrix = np.array(costMatrix)
-            if average==True:
-                return 1-np.mean(costMatrix)
-            else:
-                indexes = su.linear_sum_assignment(costMatrix)
-                total = 0
-                rowMarked = [0] * len(documents1parsed[d1])
-                colMarked = [0] * len(documents1parsed[d2])
-                for row, column in indexes:
-                    total += costMatrix[row][column]
-                    rowMarked[row] = 1
-                    colMarked [column] = 1
-                for k in range(len(rowMarked)):
-                    if rowMarked[k]==0:
-                        total+= np.min(costMatrix[k])
-                for c in range(len(colMarked)):
-                    if colMarked[c]==0:
-                        total+= np.min(costMatrix[:,c])
-                maxlengraph = max(len(documents1parsed[d1]),len(documents1parsed[d2]))
-                results[(d1,d2)] = 1-total/maxlengraph#, minWeight/minlengraph, randtotal/lengraph
-        return results
-
-    def syntax_similarity_one_list(self, documents1, average): #syntax similarity of each document with all other documents
-        global numnodes
-        documents1parsed = []
-        for d1 in range(len(documents1)):
-            #print d1
-            tempsents = (self.sent_detector.tokenize(documents1[d1].strip()))
-            for s in tempsents:
-                if len(s.split())>100:
-                    documents1parsed.append("NA")
-                    break
-            else:
-                temp = list(self.parser.raw_parse_sents((tempsents)))
-                for i in range(len(temp)):
-                    temp[i] = list(temp[i])[0]
-                    temp[i] = ParentedTree.convert(temp[i])
-                documents1parsed.append(list(temp))
-        results ={}
-        for d1 in range(len(documents1parsed)):
-            #print d1
-            for d2 in range(d1+1 , len(documents1parsed)):
-                if documents1parsed[d1] == "NA" or documents1parsed[d2]=="NA":
-                    continue
-                costMatrix = []
-                for i in range(len(documents1parsed[d1])):
-                    numnodes = 0
-                    tempnode = Node(documents1parsed[d1][i].root().label())
-                    new_sentencedoc1 = self.convert_mytree(documents1parsed[d1][i],tempnode)
-                    temp_costMatrix = []
-                    sen1nodes = numnodes
-                    for j in range(len(documents1parsed[d2])):
-                        numnodes=0.0
-                        tempnode = Node(documents1parsed[d2][j].root().label())
-                        new_sentencedoc2 = self.convert_mytree(documents1parsed[d2][j],tempnode)
-                        ED = simple_distance(new_sentencedoc1, new_sentencedoc2)
-                        ED = ED / (numnodes + sen1nodes)
-                        temp_costMatrix.append(ED)
-                    costMatrix.append(temp_costMatrix)
-                costMatrix = np.array(costMatrix)
-                if average==True:
-                    return 1-np.mean(costMatrix)
-                else:
-                    indexes = su.linear_sum_assignment(costMatrix)
-                    total = 0
-                    rowMarked = [0] * len(documents1parsed[d1])
-                    colMarked = [0] * len(documents1parsed[d2])
-                    for row, column in indexes:
-                        total += costMatrix[row][column]
-                        rowMarked[row] = 1
-                        colMarked [column] = 1
-                    for k in range(len(rowMarked)):
-                        if rowMarked[k]==0:
-                            total+= np.min(costMatrix[k])
-                    for c in range(len(colMarked)):
-                        if colMarked[c]==0:
-                            total+= np.min(costMatrix[:,c])
-                    maxlengraph = max(len(documents1parsed[d1]),len(documents1parsed[d2]))
-                    results[(d1,d2)] = 1-total/maxlengraph#, minWeight/minlengraph, randtotal/lengraph
-        return results
+    def syntax_similarity_two_parsed_documents(self, doc1_parsed:"list[Tree]", doc2_parsed:"list[Tree]", average=False, sigma=1, lmbda=0.4, use_new_delta=True):
+        costMatrix = []
+        for sentencedoc1 in doc1_parsed:
+            temp_costMatrix = []
+            for sentencedoc2 in doc2_parsed:
+                normalized_score = LabelTreeKernel.kernel(sentencedoc1, sentencedoc2, sigma, lmbda, use_new_delta)
+                temp_costMatrix.append(normalized_score)
+            costMatrix.append(temp_costMatrix)
+        costMatrix = np.array(costMatrix)
+        if average==True:
+            return np.mean(costMatrix)
+        else:
+            row_ind, col_ind = su.linear_sum_assignment(costMatrix, True)
+            total = costMatrix[row_ind, col_ind].sum()
+            maxlengraph = max(len(doc1_parsed),len(doc2_parsed))
+            return (total/maxlengraph)
