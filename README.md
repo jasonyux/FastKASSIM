@@ -123,6 +123,8 @@ Therefore, if you want to invent your own metric, you can do so by:
 				"average": False # not really used, here for demonstration purposes
 			}
 			# filter accepted params
+			# eventually this will be passed into kernel(tree_x, tree_y, **params) call 
+			# as the params field
 			conf_params = {}
 			for k,v in default_params.items():
 				if user_configs.get(k) is None:

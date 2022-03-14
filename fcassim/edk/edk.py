@@ -17,9 +17,10 @@ class EditDistanceKernel(object):
 			dict: parameters relevant to EditDistanceKernel
 		"""
 		default_params = {
-			"average": False
+			"average": False # not used, here for demo purporses
 		}
 		# filter accepted params
+		# eventually this will be passed into kernel(tree_x, tree_y, **params) call as the params field
 		conf_params = {}
 		for k,v in default_params.items():
 			if user_configs.get(k) is None:
