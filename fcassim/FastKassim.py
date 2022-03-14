@@ -9,8 +9,7 @@ import pathlib
 import numpy as np
 import scipy.optimize as su
 
-from nltk.tree import ParentedTree, Tree
-from zss import simple_distance, Node
+from nltk.tree import Tree
 from fcassim.ltk.ltk import LabelTreeKernel
 from fcassim.edk.edk import EditDistanceKernel
 from fcassim.cassim.Cassim import Cassim

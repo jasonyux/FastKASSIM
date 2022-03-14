@@ -17,7 +17,7 @@ class EditDistanceKernel(object):
 			dict: parameters relevant to EditDistanceKernel
 		"""
 		default_params = {
-			"average": False # not used, here for demo purporses
+			"average": False # this is the only special parameter that will be used by FastKassim.syntax_similarity_two_parsed_documents
 		}
 		# filter accepted params
 		# eventually this will be passed into kernel(tree_x, tree_y, **params) call as the params field
