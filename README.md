@@ -1,10 +1,10 @@
-# FastKassim
+# FastKASSIM
 
 FastKassim - a fast, extensible metric for document-level syntactic similarity inspired by the Fast Tree Kernel [[1]](#1)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[2]](#2)
 
 # Usage
 
-For the **first time**, please run the `download()` method that downloads the stanford parser and extracts it to be visible to CASSIM
+For the **first time**, please run the `download()` method that downloads and extracts the Stanford Parser
 ```python
 >>> import fcassim.FastKassim as fcassim
 >>> fcassim.download()
