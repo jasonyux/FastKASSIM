@@ -1,16 +1,25 @@
+__author__ = 'jasonyux'
+
 import logging
 import urllib.request
 import zipfile
 import os
 import shutil
 import pathlib
+import numpy as np
+import scipy.optimize as su
 
-from nltk.tree import Tree
-from .cassim.Cassim import Cassim
+from nltk.tree import ParentedTree, Tree
+from zss import simple_distance, Node
+from fcassim.ltk.ltk import LabelTreeKernel
+from fcassim.edk.edk import EditDistanceKernel
+from fcassim.cassim.Cassim import Cassim
+
 
 class FastKassim(Cassim):
-	LTK = 0
-	FTK = 1
+	LTK = LabelTreeKernel.LTK
+	FTK = LabelTreeKernel.FTK
+	ED = EditDistanceKernel.EDK
 
 	def __init__(self, metric:int, swbd=False, **compute_params):
 		super().__init__(swbd=swbd)
@@ -18,6 +27,7 @@ class FastKassim(Cassim):
 
 		self.__metric = metric
 		self.__params = compute_params
+		self.__kernel = None
 		return
 
 	@property
@@ -36,29 +46,36 @@ class FastKassim(Cassim):
 		self.__metric, self.__params = self.__configure(self.__metric, value)
 		return
 
+	def __configure_kernel(self, metric, **params):
+		if self.__metric == FastKassim.LTK:
+			self.__kernel = LabelTreeKernel
+			return LabelTreeKernel.config(metric, **params)
+		elif self.__metric == FastKassim.FTK:
+			self.__kernel = LabelTreeKernel
+			return LabelTreeKernel.config(metric, **params)
+		elif self.__metric == FastKassim.ED:
+			self.__kernel = EditDistanceKernel
+			return EditDistanceKernel.config(metric, **params)
+		return
+
 	def __configure(self, metric, params):
-		default_params = {
-			"average": False,
-			"sigma": 1,
-			"lmbda": 0.4
-		}
-		if metric < FastKassim.LTK or metric > FastKassim.FTK:
+		"""
+		Main entry point for configuring kernel method, parameters, and etc
+		"""
+		if metric < FastKassim.LTK or metric > FastKassim.ED:
 			raise Exception(f"""
 			Please specify metric to be:
 				FastKassim.LTK or {FastKassim.LTK};
 				FastKassim.FTK or {FastKassim.FTK};
+				FastKassim.ED or {FastKassim.ED};
 			""")
-		# filter accepted params
-		conf_params = {}
-		for k,v in default_params.items():
-			if params.get(k) is None:
-				logging.info(f"param {k}={v} will be used")
-				conf_params[k] = v
-			else:
-				conf_params[k] = params[k]
-		conf_params["use_new_delta"] = (metric == FastKassim.LTK)
+		# update metric
+		self.__metric = metric
 
-		logging.info(f"FastKassim Configued mode={metric}, param={conf_params}")
+		# configure kernel method call AND its parameters
+		conf_params = self.__configure_kernel(metric, **params)
+
+		logging.info(f"FastKassim Configued kernel={self.__kernel.NAME}, param={conf_params}")
 		return metric, conf_params
 
 	def parse_document(self, doc, tokenizer=None, parser=None):
@@ -121,6 +138,24 @@ class FastKassim(Cassim):
 			""")
 			return -1.
 		return self.syntax_similarity_two_parsed_documents(parsed_doc1, parsed_doc2, **self.__params)
+
+	def syntax_similarity_two_parsed_documents(self, doc1_parsed:"list[Tree]", doc2_parsed:"list[Tree]", average=False, **kernal_params): # average=False, sigma=1, lmbda=0.4, use_new_delta=True
+		costMatrix = []
+		for sentencedoc1 in doc1_parsed:
+			temp_costMatrix = []
+			for sentencedoc2 in doc2_parsed:
+				normalized_score = self.__kernel.kernel(sentencedoc1, sentencedoc2, **kernal_params)
+				temp_costMatrix.append(normalized_score)
+			costMatrix.append(temp_costMatrix)
+		costMatrix = np.array(costMatrix)
+		if average==True:
+			return np.mean(costMatrix)
+		else:
+			row_ind, col_ind = su.linear_sum_assignment(costMatrix, True)
+			total = costMatrix[row_ind, col_ind].sum()
+			maxlengraph = max(len(doc1_parsed),len(doc2_parsed))
+			return (total/maxlengraph)
+
 
 def download():
 	# configure folders

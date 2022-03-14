@@ -5,10 +5,37 @@ from nltk.tree import Tree
 import math
 
 class LabelTreeKernel():
+	NAME = "LabelTreeKernel"
+	LTK = 0
+	FTK = 1
 	include_leaves = False # KELP has this default to True
 
 	def __init__(self) -> None:
 		pass
+
+	@staticmethod
+	def config(metric, **user_configs):
+		"""returns customized parameters but relevant to the current kernel
+
+		Returns:
+			dict: parameters relevant to LabelTreeKernel
+		"""
+		default_params = {
+			"average": False,
+			"sigma": 1,
+			"lmbda": 0.4,
+			"use_new_delta": True
+		}
+		# filter accepted params
+		conf_params = {}
+		for k,v in default_params.items():
+			if user_configs.get(k) is None:
+				conf_params[k] = v
+			else:
+				conf_params[k] = user_configs[k]
+		
+		conf_params["use_new_delta"] = (metric == LabelTreeKernel.LTK)
+		return conf_params
 
 	@staticmethod
 	def kernel(tree_x:Tree, tree_y:Tree, sigma:int, lmbda:float, use_new_delta=True) -> float:
