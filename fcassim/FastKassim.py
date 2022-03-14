@@ -23,11 +23,11 @@ class FastKassim(Cassim):
 
 	def __init__(self, metric:int, swbd=False, **compute_params):
 		super().__init__(swbd=swbd)
+		self.__kernel = None
+		
 		metric, compute_params = self.__configure(metric, compute_params)
-
 		self.__metric = metric
 		self.__params = compute_params
-		self.__kernel = None
 		return
 
 	@property
