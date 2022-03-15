@@ -8,7 +8,7 @@ class LabelTreeKernel():
 	NAME = "LabelTreeKernel"
 	LTK = 0
 	FTK = 1
-	include_leaves = False # KELP has this default to True
+	include_leaves = False
 
 	def __init__(self) -> None:
 		pass

@@ -8,7 +8,6 @@ import scipy.optimize as su
 from nltk.parse import stanford
 from nltk.tree import Tree
 
-numnodes =0
 root = pathlib.Path(__file__).parent.resolve()
 
 class Kassim:

@@ -1,5 +1,4 @@
 __author__ = 'jasonyux'
-
 import logging
 import urllib.request
 import zipfile
