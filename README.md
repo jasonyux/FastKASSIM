@@ -83,10 +83,10 @@ Then, example usages would be:
 	```
 
 # Using your own Tree Kernel
-Another goal of this project is to allow for any similarity metrics (between two parse trees) to be used. This can be done by:
-1. implement your own kernel class, that has:
+Another goal of this project is to allow for any similarity metrics (between two parse trees) to be used. You can implement and use your own metric/kernel function by:
+1. implement a kernel class, that has:
 	- a kernel method that computes the normalized similarity score between two parse trees `kernel(tree_x:Tree, tree_y:Tree, **params)`
-2. pass your kernel and the `params` you want to use to the `Kassim` class
+2. construct a `Kassim` object and pass in your kernel instance and kernel related `params`
 
 *For Example*
 1. Here a simple class that outputs the sum of `value1` and `value2` as similarity score
@@ -94,7 +94,7 @@ Another goal of this project is to allow for any similarity metrics (between two
 	import nltk
 
 	class DummyKernel(object):
-		NAME = "AllSimilarKernel"
+		NAME = "DummyKernel"
 
 		def __init__(self):
 			pass
@@ -105,7 +105,7 @@ Another goal of this project is to allow for any similarity metrics (between two
 			"""
 			return params["value1"] + params["value2"]
 	```
-2. Then, what `params` to be passed into the `kernel` function is can be specified during the intialization of the `MyKassim` class:
+2. Then, what `params` will be passed into the `kernel` function is specified during the intialization of the `MyKassim` class:
 	```python
 	from fkassim.kassim.Kassim import Kassim
 
@@ -117,6 +117,21 @@ Another goal of this project is to allow for any similarity metrics (between two
 	doc2 = "Spring is coming."
 
 	MyKassim.compute_similarity(doc1, doc2)
+	# returns 0.9
+	```
+	Both `parse_document` and `compute_similarity_preparsed` will also be available:
+	```python
+	doc1 = """
+		Harpers, Harpers, they really care. Harpers, Harpers, stay in motion.
+	"""
+	doc2 = """
+		Harpers, Harpers, they really heal. Harpers, Harpers, stay in movement.
+	"""
+	# parse document into list of parse trees
+	doc1_parsed = MyKassim.parse_document(doc1)
+	doc2_parsed = MyKassim.parse_document(doc2)
+
+	MyKassim.compute_similarity_preparsed(doc1_parsed, doc2_parsed)
 	# returns 0.9
 	```
 
