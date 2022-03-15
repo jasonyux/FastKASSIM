@@ -7,9 +7,9 @@ import os
 import shutil
 import pathlib
 
-from fcassim.ltk.ltk import LabelTreeKernel
-from fcassim.edk.edk import EditDistanceKernel
-from fcassim.cassim.Kassim import Kassim
+from fkassim.ltk.ltk import LabelTreeKernel
+from fkassim.edk.edk import EditDistanceKernel
+from fkassim.kassim.Kassim import Kassim
 
 class FastKassim(Kassim):
 	LTK = LabelTreeKernel.LTK
@@ -78,7 +78,7 @@ class FastKassim(Kassim):
 def download():
 	# configure folders
 	root = pathlib.Path(__file__).parent.resolve()
-	target_folder = os.path.join(root, "cassim/jars")
+	target_folder = os.path.join(root, "kassim/jars")
 	tmp_folder = os.path.join(root, "tmp")
 	pathlib.Path(target_folder).mkdir(parents=False, exist_ok=False)
 	pathlib.Path(tmp_folder).mkdir(parents=False, exist_ok=True)
@@ -93,9 +93,9 @@ def download():
 	# extract
 	print("Extracting")
 	with zipfile.ZipFile(fpath, 'r') as zip_ref:
-		zip_ref.extractall(os.path.join(root, "cassim"))
+		zip_ref.extractall(os.path.join(root, "kassim"))
 	
-	extracted_dir = os.path.join(root, "cassim/stanford-parser-full-2015-04-20")
+	extracted_dir = os.path.join(root, "kassim/stanford-parser-full-2015-04-20")
 	pathlib.Path(extracted_dir).rename(target_folder)
 
 	models_dir = os.path.join(target_folder, "stanford-parser-3.5.2-models.jar")

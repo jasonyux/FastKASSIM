@@ -6,8 +6,8 @@ FastKassim - a fast, extensible metric for document-level syntactic similarity i
 
 For the **first time**, please run the `download()` method that downloads and extracts the Stanford Parser
 ```python
->>> import fcassim.FastKassim as fcassim
->>> fcassim.download()
+>>> import fkassim.FastKassim as fkassim
+>>> fkassim.download()
 Downloading https://nlp.stanford.edu/software/stanford-parser-full-2015-04-20.zip
 Extracting
 Cleaning up
@@ -18,8 +18,8 @@ note that since `https://nlp.stanford.edu/software/stanford-parser-full-2015-04-
 Then, example usages would be:
 - **quickstart**:
 	```python
-	>>> import fcassim.FastKassim as fcassim
-	>>> FastKassim = fcassim.FastKassim(fcassim.FastKassim.LTK)
+	>>> import fkassim.FastKassim as fkassim
+	>>> FastKassim = fkassim.FastKassim(fkassim.FastKassim.LTK)
 	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
 	```
@@ -27,14 +27,14 @@ Then, example usages would be:
 
 - **custom configuration**:
 	```python
-	>>> import fcassim.FastKassim as fcassim
-	>>> metric = fcassim.FastKassim.LTK
+	>>> import fkassim.FastKassim as fkassim
+	>>> metric = fkassim.FastKassim.LTK
 	>>> param = {
 	...     "sigma": 1,
 	...     "lmbda": 0.4,
 	...     "average": False
 	... }
-	>>> FastKassim = fcassim.FastKassim(metric)
+	>>> FastKassim = fkassim.FastKassim(metric)
 	>>> FastKassim.set_params(**param)
 	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
@@ -46,8 +46,8 @@ Then, example usages would be:
 
 - **Need to recompute lots of parse trees (e.g., pairwise comparisons)? Try using customizable document parsing**:
 	```python
-	>>> import fcassim.FastKassim as fcassim
-	>>> FastKassim = fcassim.FastKassim(fcassim.FastKassim.LTK)
+	>>> import fkassim.FastKassim as fkassim
+	>>> FastKassim = fkassim.FastKassim(fkassim.FastKassim.LTK)
 	>>> doc1 = """
 	... Harpers, Harpers, they really care. Harpers, Harpers, stay in motion.
 	... """
@@ -70,8 +70,8 @@ Then, example usages would be:
 	
 	Resultwise, the above will be the same as doing:
 	```python
-	>>> import fcassim.FastKassim as fcassim
-	>>> FastKassim = fcassim.FastKassim(fcassim.FastKassim.LTK)
+	>>> import fkassim.FastKassim as fkassim
+	>>> FastKassim = fkassim.FastKassim(fkassim.FastKassim.LTK)
 	>>> doc1 = """
 	... Harpers, Harpers, they really care. Harpers, Harpers, stay in motion.
 	... """
@@ -82,7 +82,45 @@ Then, example usages would be:
 	0.7717689799810963
 	```
 
-# Adding your own Kernel Function
+# Using your own Tree Kernel
+Another goal of this project is to allow for any similarity metrics (between two parse trees) to be used. This can be done by:
+1. implement your own kernel class, that has:
+	- a kernel method that computes the normalized similarity score between two parse trees `kernel(tree_x:Tree, tree_y:Tree, **params)`
+2. pass your kernel and the `params` you want to use to the `Kassim` class
+
+*For Example*
+1. Here a simple class that outputs the sum of `value1` and `value2` as similarity score
+	```python
+	import nltk
+
+	class DummyKernel(object):
+		NAME = "AllSimilarKernel"
+
+		def __init__(self):
+			pass
+
+		def kernel(self, tree_x:nltk.Tree, tree_y:nltk.Tree, **params):
+			"""
+			returns a normalized edit distance score
+			"""
+			return params["value1"] + params["value2"]
+	```
+2. Then, what `params` to be passed into the `kernel` function is can be specified during the intialization of the `MyKassim` class:
+	```python
+	from fkassim.kassim.Kassim import Kassim
+
+	MyKassim = Kassim(Kernel=DummyKernel(), value1=0.5, value2=0.4)
+	```
+	so that all later computations will only involve using `MyKassim`:
+	```python
+	doc1 = "Winter is leaving."
+	doc2 = "Spring is coming."
+
+	MyKassim.compute_similarity(doc1, doc2)
+	# returns 0.9
+	```
+
+## Adding Tree Kernels to FastKassim
 Currently we have three metrics implemented for measuring syntax similarity between two documents, and they all come down to measuring syntax similarity between the parse trees of two sentences.
 
 Therefore, if you want to invent your own metric, you can do so by:
@@ -90,10 +128,10 @@ Therefore, if you want to invent your own metric, you can do so by:
 	- static variables representing its name and ID
 	- a **parameter configuration method** with the signature `config(metric, **user_configs)`
 	- a **kernel method** that computes the normalized similarity score between two parse trees `kernel(tree_x:Tree, tree_y:Tree, **params)`
-2. register your class by updating the `fcassim/FastKassim.py` file:
+2. register your class by updating the `fkassim/FastKassim.py` file:
 	- add your class's ID to the static variables inside the `Fastkassim` class:
 		```python
-		class FastKassim(Cassim):
+		class FastKassim(kassim):
 			LTK = LabelTreeKernel.LTK
 			FTK = LabelTreeKernel.FTK
 			ED = EditDistanceKernel.EDK
@@ -103,7 +141,7 @@ Therefore, if you want to invent your own metric, you can do so by:
 
 *For example:* implementing the normalized edit distance kernel `EditDistanceKernel`
 
-1. the class will be created under `fcassim/edk/edk.py`, and the key components will be:
+1. the class will be created under `fkassim/edk/edk.py`, and the key components will be:
 	```python
 	class EditDistanceKernel(object):
 		NAME = "EditDistanceKernel" # your kernel's name
@@ -148,11 +186,11 @@ Therefore, if you want to invent your own metric, you can do so by:
 	```
 	(certain helper methods are omitted, only required methods/variables are shown here)
 
-2. Then, register this new class into `fcassim/FastKassim.py` by:
+2. Then, register this new class into `fkassim/FastKassim.py` by:
 
 	(only necessary changes are shown here)
 	```python
-	class FastKassim(Cassim):
+	class FastKassim(kassim):
 		LTK = LabelTreeKernel.LTK
 		FTK = LabelTreeKernel.FTK
 		ED = EditDistanceKernel.EDK # 1. ADD your class's ID here
