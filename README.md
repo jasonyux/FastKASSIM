@@ -1,7 +1,14 @@
 # FastKASSIM
 
-FastKassim - a fast, extensible metric for document-level syntactic similarity inspired by the Fast Tree Kernel [[1]](#1)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[2]](#2)
+FastKassim [[1]](#1) - a fast, extensible metric for document-level syntactic similarity inspired by the Fast Tree Kernel [[2]](#2)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[3]](#3)
 
+# Table of Contents
+
+- [FastKASSIM](#fastkassim)
+- [Usage](#usage)
+- [Using your own Tree Kernel](#using-your-own-tree-kernel)
+  * [Adding Tree Kernels to FastKassim](#adding-tree-kernels-to-fastkassim)
+- [Paper/References](#references)
 # Usage
 
 For the **first time**, please run the `download()` method that downloads and extracts the Stanford Parser
@@ -39,10 +46,10 @@ Then, example usages would be:
 	>>> FastKassim.compute_similarity("Winter is leaving.", "Spring is coming.")
 	1.0
 	```
-	currently implemented metrics include:
-	- `FastKassim.LTK`: label tree kernel
-	- `FastKassim.FTK`: fast tree kernel
-	- `FastKassim.ED`: normalized edit distance
+	currently implemented tree similarity metrics include:
+	- `FastKassim.LTK`: label-based tree kernel [[1]](#1)
+	- `FastKassim.FTK`: fast tree kernel [[2]](#2)
+	- `FastKassim.ED`: normalized edit distance [[3]](#3)
 
 - **Need to recompute lots of parse trees (e.g., pairwise comparisons)? Try using customizable document parsing**:
 	```python
@@ -246,7 +253,48 @@ Therefore, if you want to invent your own metric, you can do so by:
 If FastKASSIM is useful in any work resulting in publication, please cite the FastKASSIM, CASSIM and FTK papers. FastKASSIM would not exist without CASSIM and FTK.
 
 <a id="1">[1]</a> 
-Moschitti, Alessandro. (2006). Making Tree Kernels Practical for Natural Language Learning.. Proceedings of the 11th Conference of the European Chapter of the Association for Computational Linguistics. https://aclanthology.org/E06-1015.pdf
+FastKASSIM: A Fast Tree Kernel-Based Syntactic Similarity Metric<br>
+Maximillian Chen*, Caitlyn Chen*, Xiao Yu*, Zhou Yu<br>
+arXiv preprint (2022)<br>
+https://arxiv.org/abs/2203.08299
+```tex
+@article{chen2022fastkassim,
+  title={FastKASSIM: A Fast Tree Kernel-Based Syntactic Similarity Metric},
+  author={Chen, Maximillian and Chen, Caitlyn and Yu, Xiao and Yu, Zhou},
+  journal={arXiv preprint arXiv:2203.08299},
+  year={2022}
+}
+```
 
 <a id="2">[2]</a> 
-Boghrati, R., Hoover, J., Johnson, K.M. et al. Conversation level syntax similarity metric. Behav Res 50, 1055–1073 (2018). https://doi.org/10.3758/s13428-017-0926-2
+Making Tree Kernels Practical for Natural Language Learning<br>
+Alessandro Moschitti<br>
+Proceedings of the 11th Conference of the European Chapter of the Association for Computational Linguistics (2006)<br>
+https://aclanthology.org/E06-1015.pdf
+```tex
+@inproceedings{moschitti2006making,
+  title={Making tree kernels practical for natural language learning},
+  author={Moschitti, Alessandro},
+  booktitle={11th conference of the European Chapter of the Association for Computational Linguistics},
+  pages={113--120},
+  year={2006}
+}
+```
+
+<a id="3">[3]</a> 
+Conversation level syntax similarity metric<br>
+Reihane Boghrati, Joe Hoover, Kate M. Johnson, Justin Garten, and Morteza Dehghani<br>
+Behavior Research Methods 50, 1055–1073 (2018)<br>
+https://doi.org/10.3758/s13428-017-0926-2
+```tex
+@article{boghrati2018conversation,
+  title={Conversation level syntax similarity metric},
+  author={Boghrati, Reihane and Hoover, Joe and Johnson, Kate M and Garten, Justin and Dehghani, Morteza},
+  journal={Behavior research methods},
+  volume={50},
+  number={3},
+  pages={1055--1073},
+  year={2018},
+  publisher={Springer}
+}
+```
