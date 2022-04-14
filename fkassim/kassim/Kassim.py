@@ -12,8 +12,8 @@ root = pathlib.Path(__file__).parent.resolve()
 
 class Kassim:
 	"""
-	Idea from CASSIM: https://github.com/USC-CSSL/CASSIM
-	Combining with kernelized metric, this is now Kernel-assim
+	Much of this code is adapted from CASSIM: https://github.com/USC-CSSL/CASSIM
+	As we use tree kernels, and intend for FastKASSIM to be used beyond conversations, we thus use the name KASSIM (Kernel-bAsed Syntactic SIMilarity Metric).
 	"""
 
 	def __init__(self, swbd=False, Kernel:object=None, **compute_params):
