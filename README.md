@@ -1,6 +1,6 @@
-# FastKASSIM
+# FastKASSIM: A Fast Kernel-Based Syntactic Similarity Metric
 
-FastKassim [[1]](#1) - a fast, extensible metric for document-level syntactic similarity inspired by the Fast Tree Kernel [[2]](#2)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[3]](#3)
+FastKASSIM [[1]](#1) - a fast, extensible metric for document-level syntactic similarity inspired by the Fast Tree Kernel [[2]](#2)  and [CASSIM](https://github.com/USC-CSSL/CASSIM) [[3]](#3)
 
 # Table of Contents
 
