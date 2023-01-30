@@ -258,11 +258,11 @@ Maximillian Chen*, Caitlyn Chen*, Xiao Yu*, Zhou Yu<br>
 arXiv preprint (2022)<br>
 https://arxiv.org/abs/2203.08299
 ```tex
-@article{chen2022fastkassim,
+@inproceedings{chen2023fastkassim,
   title={FastKASSIM: A Fast Tree Kernel-Based Syntactic Similarity Metric},
   author={Chen, Maximillian and Chen, Caitlyn and Yu, Xiao and Yu, Zhou},
-  journal={arXiv preprint arXiv:2203.08299},
-  year={2022}
+  booktitle={Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics},
+  year={2023}
 }
 ```
 
