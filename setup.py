@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="fkassim",
-    version="0.0.1",
+    version="0.0.2",
     author="Columbia NLP Lab",
     author_email="xy2437@columbia.edu",
     description="kassim with LTK Support",
